@@ -8,31 +8,31 @@
 </style>
 
 <body onload='init()'>
-    <svg width=300 height=300>
+    <svg width=1200 height=1000>
     </svg>
     <script>
         async function init() {
-            var data = await d3.csv("https://flunky.github.io/cars2017.csv")
+            var data = await d3.csv("honeyproduction.csv")
             console.log(data);
-            var x = d3.scaleLog([10, 150], [0, 200]).base(10);
-            var y = d3.scaleLog([10, 150], [200, 0]).base(10);
+            var x = d3.scaleLinear([1998, 2012], [0, 1000]);
+            var y = d3.scaleLinear([220000000, 140000000], [0, 800]);
 
             var svg = d3.select("svg");
 
             svg.append("g")
-                .attr("transform", "translate(50,50)")
+                .attr("transform", "translate(100,50)")
                 .selectAll("circle").data(data).enter().append("circle")
-                .attr("cx", (d, i) => x(d.AverageCityMPG))
-                .attr("cy", (d, i) => y(d.AverageHighwayMPG))
-                .attr("r", (d, i) => parseInt(d.EngineCylinders) + 2)
+                .attr("cx", (d, i) => x(d.year))
+                .attr("cy", (d, i) => 100) // need to handle summing states
+                .attr("r", 5)
 
             svg.append("g")
-                .attr("transform", "translate(50,50)")
-                .call(d3.axisLeft(y).tickValues([10, 20, 50, 100]).tickFormat(d3.format("~s")))
+                .attr("transform", "translate(100,50)")
+                .call(d3.axisLeft(y))
 
             svg.append("g")
-                .attr("transform", "translate(50,250)")
-                .call(d3.axisBottom(x).tickValues([10, 20, 50, 100]).tickFormat(d3.format("~s")))
+                .attr("transform", "translate(100,850)")
+                .call(d3.axisBottom(x).tickFormat(d3.format("~")))
         }
     </script>
 </body>
