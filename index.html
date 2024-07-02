@@ -5,6 +5,10 @@
         fill: lightblue;
         stroke: black;
     }
+
+    svg {
+        background-color: #329da8;
+    }
 </style>
 
 <body onload='displayScene(3)'>
@@ -49,7 +53,7 @@
             svg.append("path")
                .datum(aggregatedData)
                .attr("fill", "none")
-               .attr("stroke", "steelblue")
+               .attr("stroke", "#ddff36")
                .attr("stroke-width", 5)
                .attr("d", line)
                .attr("transform", "translate(100,50)")
@@ -74,6 +78,7 @@
             svg.append("text")
                .attr("class", "axis-label")
                .attr("text-anchor", "middle")
+               .attr("font-size",18)
                .attr("x", 600)
                .attr("y", 900)
                .text("Year");
@@ -82,6 +87,7 @@
             svg.append("text")
                .attr("class", "axis-label")
                .attr("text-anchor", "middle")
+               .attr("font-size",18)
                .attr("transform", "rotate(-90)")
                .attr("x", -500)
                .attr("y", 25)
@@ -91,8 +97,9 @@
             svg.append("text")
                .attr("class", "title")
                .attr("text-anchor", "middle")
+               .attr("font-size", 32)
                .attr("x", 600)
-               .attr("y", 25)
+               .attr("y", 50)
                .text("Honey Production in the US");
         }
     </script>
