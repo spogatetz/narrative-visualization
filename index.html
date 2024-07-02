@@ -51,6 +51,13 @@
                .attr("stroke-width", 2)
                .attr("d", line)
                .attr("transform", "translate(100,50)")
+               .transition()
+               .duration(2000) // Animation duration in milliseconds
+               .ease(d3.easeLinear) // Easing function
+               .attrTween("stroke-dasharray", function() {
+                   var length = this.getTotalLength();
+                   return d3.interpolate(`0,${length}`, `${length},${length}`);
+               });
 
             svg.append("g")
                 .attr("transform", "translate(100,50)")
