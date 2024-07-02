@@ -7,13 +7,21 @@
     }
 </style>
 
-<body onload='init()'>
+<body onload='displayScene(3)'>
     <svg width=1200 height=1000>
     </svg>
     <script>
-        async function init() {
-            var data = await d3.csv("honeyproduction.csv")
-            var temp = data.reduce((acc, obj) => {
+        var currentScene = 1;
+        const yearMap = { // Set the year parameters for each scene
+            1: 2000,
+            2: 2006,
+            3: 2012
+        }
+
+        async function displayScene(scene) {
+            const maxYear = yearMap[scene]
+            const data = await d3.csv("honeyproduction.csv")
+            const temp = data.reduce((acc, obj) => {
                 const { year, totalprod } = obj;
                 if(!acc[year]) {
                     acc[year] = 0;
@@ -24,41 +32,36 @@
 
             console.log(temp)
 
-            var aggregatedData = Object.keys(temp).map((year) => {
+            const aggregatedData = Object.keys(temp).map((year) => {
                 return { year, totalprod: temp[year]}
-            })
+            }).filter((item) => item.year <= maxYear)
 
             console.log(aggregatedData);
-            var x = d3.scaleLinear([1998, 2012], [0, 1000]);
-            var y = d3.scaleLinear([220000000, 100000000], [0, 800]);
+            const x = d3.scaleLinear([1998, 2012], [0, 1000]);
+            const y = d3.scaleLinear([220000000, 100000000], [0, 800]);
 
-            var svg = d3.select("svg");
+            const svg = d3.select("svg");
 
-            svg.append("g")
-                .attr("transform", "translate(100,50)")
-                .selectAll("circle").data(aggregatedData).enter().append("circle")
-                .attr("cx", (d, i) => x(d.year))
-                .attr("cy", (d, i) => y(d.totalprod)) // need to handle summing states
-                .attr("r", 5)
-
-            var line = d3.line()
+            // Draw lines
+            const line = d3.line()
                         .x(d => x(d.year))
                         .y(d => y(d.totalprod));
             svg.append("path")
                .datum(aggregatedData)
                .attr("fill", "none")
                .attr("stroke", "steelblue")
-               .attr("stroke-width", 2)
+               .attr("stroke-width", 5)
                .attr("d", line)
                .attr("transform", "translate(100,50)")
                .transition()
                .duration(2000) // Animation duration in milliseconds
                .ease(d3.easeLinear) // Easing function
                .attrTween("stroke-dasharray", function() {
-                   var length = this.getTotalLength();
+                const length = this.getTotalLength();
                    return d3.interpolate(`0,${length}`, `${length},${length}`);
                });
 
+            // Axes
             svg.append("g")
                 .attr("transform", "translate(100,50)")
                 .call(d3.axisLeft(y))
@@ -66,6 +69,31 @@
             svg.append("g")
                 .attr("transform", "translate(100,850)")
                 .call(d3.axisBottom(x).tickFormat(d3.format("~")))
+
+            // X Axis Label
+            svg.append("text")
+               .attr("class", "axis-label")
+               .attr("text-anchor", "middle")
+               .attr("x", 600)
+               .attr("y", 900)
+               .text("Year");
+
+            // Y Axis Label
+            svg.append("text")
+               .attr("class", "axis-label")
+               .attr("text-anchor", "middle")
+               .attr("transform", "rotate(-90)")
+               .attr("x", -500)
+               .attr("y", 25)
+               .text("Total Production");
+            
+            // Chart Title
+            svg.append("text")
+               .attr("class", "title")
+               .attr("text-anchor", "middle")
+               .attr("x", 600)
+               .attr("y", 25)
+               .text("Honey Production in the US");
         }
     </script>
 </body>
