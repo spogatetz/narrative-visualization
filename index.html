@@ -30,7 +30,7 @@
 
             console.log(aggregatedData);
             var x = d3.scaleLinear([1998, 2012], [0, 1000]);
-            var y = d3.scaleLinear([220000000, 140000000], [0, 800]);
+            var y = d3.scaleLinear([220000000, 100000000], [0, 800]);
 
             var svg = d3.select("svg");
 
@@ -40,6 +40,17 @@
                 .attr("cx", (d, i) => x(d.year))
                 .attr("cy", (d, i) => y(d.totalprod)) // need to handle summing states
                 .attr("r", 5)
+
+            var line = d3.line()
+                        .x(d => x(d.year))
+                        .y(d => y(d.totalprod));
+            svg.append("path")
+               .datum(aggregatedData)
+               .attr("fill", "none")
+               .attr("stroke", "steelblue")
+               .attr("stroke-width", 2)
+               .attr("d", line)
+               .attr("transform", "translate(100,50)")
 
             svg.append("g")
                 .attr("transform", "translate(100,50)")
