@@ -21,8 +21,20 @@
     </svg>
     <script>
         var data;
+        var aggregatedData;
         async function init() {
             data = await d3.csv("honeyproduction.csv");
+            const temp = data.reduce((acc, obj) => {
+                const { year, totalprod } = obj;
+                if(!acc[year]) {
+                    acc[year] = 0;
+                }
+                acc[year] += parseInt(totalprod);
+                return acc;
+            }, {})
+            aggregatedData = Object.keys(temp).map((year) => {
+                return { year, totalprod: temp[year]}
+            })
             displayScene(1);
         }
         var currentScene = 1;
@@ -53,32 +65,17 @@
                 d3.selectAll("path").remove();
             }
             const maxYear = yearMap[scene]
-            const temp = data.reduce((acc, obj) => {
-                const { year, totalprod } = obj;
-                if(!acc[year]) {
-                    acc[year] = 0;
-                }
-                acc[year] += parseInt(totalprod);
-                return acc;
-            }, {})
+            const data = aggregatedData.filter((item) => item.year <= maxYear)
 
-            console.log(temp)
-
-            const aggregatedData = Object.keys(temp).map((year) => {
-                return { year, totalprod: temp[year]}
-            }).filter((item) => item.year <= maxYear)
-
-            console.log(aggregatedData);
             const x = d3.scaleLinear([1998, 2012], [0, 1000]);
             const y = d3.scaleLinear([220000000, 100000000], [0, 800]);
-
 
             // Draw lines
             const line = d3.line()
                         .x(d => x(d.year))
                         .y(d => y(d.totalprod));
             svg.append("path")
-               .datum(aggregatedData)
+               .datum(data)
                .attr("fill", "none")
                .attr("stroke", "#ddff36")
                .attr("stroke-width", 5)
