@@ -9,22 +9,50 @@
     svg {
         background-color: #329da8;
     }
+
 </style>
 
-<body onload='displayScene(3)'>
+<body onload='init()'>
+    <div>
+        <button type-"button" onClick="previousScene()"><-</button>
+        <button type-"button" onClick="nextScene()">-></button>
+    </div>
     <svg width=1200 height=1000>
     </svg>
     <script>
+        var data;
+        async function init() {
+            data = await d3.csv("honeyproduction.csv");
+            displayScene(1);
+        }
         var currentScene = 1;
+
         const yearMap = { // Set the year parameters for each scene
             1: 2000,
             2: 2006,
             3: 2012
         }
 
-        async function displayScene(scene) {
+        async function nextScene() {
+            if(currentScene < 3) {
+                currentScene += 1;
+                displayScene(currentScene)
+            }
+        }
+
+        async function previousScene() {
+            if(currentScene > 1) {
+                currentScene -= 1;
+                displayScene(currentScene, true)
+            }
+        }
+
+        async function displayScene(scene, clearScene=false) {
+            const svg = d3.select("svg");
+            if(clearScene){
+                d3.selectAll("path").remove();
+            }
             const maxYear = yearMap[scene]
-            const data = await d3.csv("honeyproduction.csv")
             const temp = data.reduce((acc, obj) => {
                 const { year, totalprod } = obj;
                 if(!acc[year]) {
@@ -44,7 +72,6 @@
             const x = d3.scaleLinear([1998, 2012], [0, 1000]);
             const y = d3.scaleLinear([220000000, 100000000], [0, 800]);
 
-            const svg = d3.select("svg");
 
             // Draw lines
             const line = d3.line()
