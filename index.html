@@ -22,8 +22,11 @@
     <script>
         var data;
         var aggregatedData;
+        var ndData;
         async function init() {
             data = await d3.csv("honeyproduction.csv");
+            console.log(data)
+            ndData = data.filter(({state}) => state === "ND")
             const temp = data.reduce((acc, obj) => {
                 const { year, totalprod } = obj;
                 if(!acc[year]) {
@@ -35,6 +38,8 @@
             aggregatedData = Object.keys(temp).map((year) => {
                 return { year, totalprod: temp[year]}
             })
+            console.log(aggregatedData)
+            console.log(ndData)
             displayScene(1);
         }
         var currentScene = 1;
@@ -66,9 +71,10 @@
             }
             const maxYear = yearMap[scene]
             const data = aggregatedData.filter((item) => item.year <= maxYear)
+            const filteredNdData = ndData.filter(({year}) => year <= maxYear)
 
             const x = d3.scaleLinear([1998, 2012], [0, 1000]);
-            const y = d3.scaleLinear([220000000, 100000000], [0, 800]);
+            const y = d3.scaleLinear([220000000, 0], [0, 800]);
 
             // Draw lines
             const line = d3.line()
@@ -78,6 +84,22 @@
                .datum(data)
                .attr("fill", "none")
                .attr("stroke", "#ddff36")
+               .attr("stroke-width", 5)
+               .attr("d", line)
+               .attr("transform", "translate(100,50)")
+               .transition()
+               .duration(2000) // Animation duration in milliseconds
+               .ease(d3.easeLinear) // Easing function
+               .attrTween("stroke-dasharray", function() {
+                const length = this.getTotalLength();
+                   return d3.interpolate(`0,${length}`, `${length},${length}`);
+               });
+            
+            // Draw North Dakota
+            svg.append("path")
+               .datum(filteredNdData)
+               .attr("fill", "none")
+               .attr("stroke", "#000052")
                .attr("stroke-width", 5)
                .attr("d", line)
                .attr("transform", "translate(100,50)")
@@ -125,6 +147,24 @@
                .attr("x", 600)
                .attr("y", 50)
                .text("Honey Production in the US");
+
+            // US Total Label
+            svg.append("text")
+               .attr("class", "text")
+               .attr("text-anchor", "middle")
+               .attr("font-size", 16)
+               .attr("x", 150)
+               .attr("y", 160)
+               .text("US Total");
+            
+            // ND Total Label
+            svg.append("text")
+               .attr("class", "text")
+               .attr("text-anchor", "middle")
+               .attr("font-size", 16)
+               .attr("x", 200)
+               .attr("y", 700)
+               .text("North Dakota Total");
         }
     </script>
 </body>
