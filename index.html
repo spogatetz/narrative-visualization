@@ -1,5 +1,6 @@
 <html>
 <script src='https://d3js.org/d3.v5.min.js'></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-annotation/2.5.1/d3-annotation.min.js" integrity="sha512-iBAeBWWWFb8HqSBcrqcz98iIpuVH1la39dEYHtyQ/pGpeCQTQVvLJOWAuhv2Q7JSHp9k7hWA7sGxU3hHJe+tFg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <style>
     circle {
         fill: lightblue;
@@ -88,8 +89,8 @@
                .attr("d", line)
                .attr("transform", "translate(100,50)")
                .transition()
-               .duration(2000) // Animation duration in milliseconds
-               .ease(d3.easeLinear) // Easing function
+               .duration(2000)
+               .ease(d3.easeLinear)
                .attrTween("stroke-dasharray", function() {
                 const length = this.getTotalLength();
                    return d3.interpolate(`0,${length}`, `${length},${length}`);
@@ -104,8 +105,8 @@
                .attr("d", line)
                .attr("transform", "translate(100,50)")
                .transition()
-               .duration(2000) // Animation duration in milliseconds
-               .ease(d3.easeLinear) // Easing function
+               .duration(2000)
+               .ease(d3.easeLinear)
                .attrTween("stroke-dasharray", function() {
                 const length = this.getTotalLength();
                    return d3.interpolate(`0,${length}`, `${length},${length}`);
