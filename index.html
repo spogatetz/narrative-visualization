@@ -1,6 +1,8 @@
 <html>
 <script src='https://d3js.org/d3.v5.min.js'></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-annotation/2.5.1/d3-annotation.min.js" integrity="sha512-iBAeBWWWFb8HqSBcrqcz98iIpuVH1la39dEYHtyQ/pGpeCQTQVvLJOWAuhv2Q7JSHp9k7hWA7sGxU3hHJe+tFg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-annotation/2.5.1/d3-annotation.min.js"
+    integrity="sha512-iBAeBWWWFb8HqSBcrqcz98iIpuVH1la39dEYHtyQ/pGpeCQTQVvLJOWAuhv2Q7JSHp9k7hWA7sGxU3hHJe+tFg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <style>
     circle {
         fill: lightblue;
@@ -10,13 +12,12 @@
     svg {
         background-color: #329da8;
     }
-
 </style>
 
 <body onload='init()'>
     <div>
-        <button type-"button" onClick="previousScene()"><-</button>
-        <button type-"button" onClick="nextScene()">-></button>
+        <button type-"button" onClick="previousScene()"><-< /button>
+                <button type-"button" onClick="nextScene()">-></button>
     </div>
     <svg width=1200 height=1000>
     </svg>
@@ -27,17 +28,17 @@
         async function init() {
             data = await d3.csv("honeyproduction.csv");
             console.log(data)
-            ndData = data.filter(({state}) => state === "ND")
+            ndData = data.filter(({ state }) => state === "ND")
             const temp = data.reduce((acc, obj) => {
                 const { year, totalprod } = obj;
-                if(!acc[year]) {
+                if (!acc[year]) {
                     acc[year] = 0;
                 }
                 acc[year] += parseInt(totalprod);
                 return acc;
             }, {})
             aggregatedData = Object.keys(temp).map((year) => {
-                return { year, totalprod: temp[year]}
+                return { year, totalprod: temp[year] }
             })
             console.log(aggregatedData)
             console.log(ndData)
@@ -51,66 +52,148 @@
             3: 2012
         }
 
+        const annotationMap = {
+            1: [
+                {
+                    note: {
+                        title: "Baseline US Honey Production"
+                    },
+                    type: d3.annotationCalloutCircle,
+                    subject: {
+                        radius: 50
+                    },
+                    x: 175,
+                    y: 100,
+                    dy: 137,
+                    dx: 162,
+                    color: "black"
+                },
+                {
+                    note: {
+                        title: "Baseline North Dakota Honey Production"
+                    },
+                    type: d3.annotationCalloutCircle,
+                    subject: {
+                        radius: 50
+                    },
+                    connector: { lineType: "horizontal" },
+                    x: 175,
+                    y: 760,
+                    dy: 0,
+                    dx: 162,
+                    color: "black"
+                }
+            ],
+            2: [
+                {
+                    note: {
+                        title: "Colony Collapse Disorder Identified"
+                    },
+                    type: d3.annotationCalloutCircle,
+                    subject: {
+                        radius: 50
+                    },
+                    x: 625,
+                    y: 325,
+                    dy: 137,
+                    dx: 162,
+                    color: "black"
+                },
+            ],
+            3: [
+                {
+                    note: {
+                        title: "US Total Production Remains Low"
+                    },
+                    type: d3.annotationCalloutCircle,
+                    subject: {
+                        radius: 50
+                    },
+                    x: 1050,
+                    y: 325,
+                    dy: 100,
+                    dx: -100,
+                    color: "black"
+                },
+                {
+                    note: {
+                        title: "North Dakota Production Remains Strong"
+                    },
+                    type: d3.annotationCalloutCircle,
+                    subject: {
+                        radius: 50
+                    },
+                    x: 1050,
+                    y: 725,
+                    dy: -100,
+                    dx: -100,
+                    color: "black"
+                }
+            ]
+        }
+
         async function nextScene() {
-            if(currentScene < 3) {
+            if (currentScene < 3) {
                 currentScene += 1;
                 displayScene(currentScene)
             }
         }
 
         async function previousScene() {
-            if(currentScene > 1) {
+            if (currentScene > 1) {
                 currentScene -= 1;
                 displayScene(currentScene, true)
             }
         }
 
-        async function displayScene(scene, clearScene=false) {
+        async function displayScene(scene, clearScene = false) {
             const svg = d3.select("svg");
-            if(clearScene){
+            if (clearScene) {
                 d3.selectAll("path").remove();
             }
+            d3.selectAll(".annotation-group").remove()
+
             const maxYear = yearMap[scene]
             const data = aggregatedData.filter((item) => item.year <= maxYear)
-            const filteredNdData = ndData.filter(({year}) => year <= maxYear)
+            const filteredNdData = ndData.filter(({ year }) => year <= maxYear)
 
             const x = d3.scaleLinear([1998, 2012], [0, 1000]);
             const y = d3.scaleLinear([220000000, 0], [0, 800]);
 
             // Draw lines
             const line = d3.line()
-                        .x(d => x(d.year))
-                        .y(d => y(d.totalprod));
+                .x(d => x(d.year))
+                .y(d => y(d.totalprod));
             svg.append("path")
-               .datum(data)
-               .attr("fill", "none")
-               .attr("stroke", "#ddff36")
-               .attr("stroke-width", 5)
-               .attr("d", line)
-               .attr("transform", "translate(100,50)")
-               .transition()
-               .duration(2000)
-               .ease(d3.easeLinear)
-               .attrTween("stroke-dasharray", function() {
-                const length = this.getTotalLength();
-                   return d3.interpolate(`0,${length}`, `${length},${length}`);
-               });
-            
+                .datum(data)
+                .attr("fill", "none")
+                .attr("stroke", "#ddff36")
+                .attr("stroke-width", 5)
+                .attr("d", line)
+                .attr("transform", "translate(100,50)")
+                .transition()
+                .duration(2000)
+                .ease(d3.easeLinear)
+                .attrTween("stroke-dasharray", function () {
+                    const length = this.getTotalLength();
+                    return d3.interpolate(`0,${length}`, `${length},${length}`);
+                });
+
             // Draw North Dakota
             svg.append("path")
-               .datum(filteredNdData)
-               .attr("fill", "none")
-               .attr("stroke", "#000052")
-               .attr("stroke-width", 5)
-               .attr("d", line)
-               .attr("transform", "translate(100,50)")
-               .transition()
-               .duration(2000)
-               .ease(d3.easeLinear)
-               .attrTween("stroke-dasharray", function() {
-                const length = this.getTotalLength();
-                   return d3.interpolate(`0,${length}`, `${length},${length}`);
-               });
+                .datum(filteredNdData)
+                .attr("fill", "none")
+                .attr("stroke", "#000052")
+                .attr("stroke-width", 5)
+                .attr("d", line)
+                .attr("transform", "translate(100,50)")
+                .transition()
+                .duration(2000)
+                .ease(d3.easeLinear)
+                .attrTween("stroke-dasharray", function () {
+                    const length = this.getTotalLength();
+                    return d3.interpolate(`0,${length}`, `${length},${length}`);
+                });
 
             // Axes
             svg.append("g")
@@ -123,49 +206,57 @@
 
             // X Axis Label
             svg.append("text")
-               .attr("class", "axis-label")
-               .attr("text-anchor", "middle")
-               .attr("font-size",18)
-               .attr("x", 600)
-               .attr("y", 900)
-               .text("Year");
+                .attr("class", "axis-label")
+                .attr("text-anchor", "middle")
+                .attr("font-size", 18)
+                .attr("x", 600)
+                .attr("y", 900)
+                .text("Year");
 
             // Y Axis Label
             svg.append("text")
-               .attr("class", "axis-label")
-               .attr("text-anchor", "middle")
-               .attr("font-size",18)
-               .attr("transform", "rotate(-90)")
-               .attr("x", -500)
-               .attr("y", 25)
-               .text("Total Production");
-            
+                .attr("class", "axis-label")
+                .attr("text-anchor", "middle")
+                .attr("font-size", 18)
+                .attr("transform", "rotate(-90)")
+                .attr("x", -500)
+                .attr("y", 25)
+                .text("Total Production");
+
             // Chart Title
             svg.append("text")
-               .attr("class", "title")
-               .attr("text-anchor", "middle")
-               .attr("font-size", 32)
-               .attr("x", 600)
-               .attr("y", 50)
-               .text("Honey Production in the US");
+                .attr("class", "title")
+                .attr("text-anchor", "middle")
+                .attr("font-size", 32)
+                .attr("x", 600)
+                .attr("y", 50)
+                .text("Honey Production in the US");
 
             // US Total Label
             svg.append("text")
-               .attr("class", "text")
-               .attr("text-anchor", "middle")
-               .attr("font-size", 16)
-               .attr("x", 150)
-               .attr("y", 160)
-               .text("US Total");
-            
+                .attr("class", "text")
+                .attr("text-anchor", "middle")
+                .attr("font-size", 16)
+                .attr("x", 150)
+                .attr("y", 160)
+                .text("US Total");
+
             // ND Total Label
             svg.append("text")
-               .attr("class", "text")
-               .attr("text-anchor", "middle")
-               .attr("font-size", 16)
-               .attr("x", 200)
-               .attr("y", 700)
-               .text("North Dakota Total");
+                .attr("class", "text")
+                .attr("text-anchor", "middle")
+                .attr("font-size", 16)
+                .attr("x", 200)
+                .attr("y", 700)
+                .text("North Dakota Total");
+
+            const makeAnnotations = d3.annotation()
+                .type(d3.annotationLabel)
+                .annotations(annotationMap[scene])
+            d3.select("svg")
+                .append("g")
+                .attr("class", "annotation-group")
+                .call(makeAnnotations)
         }
     </script>
 </body>
