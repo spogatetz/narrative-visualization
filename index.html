@@ -157,6 +157,7 @@
                 d3.selectAll("path").remove();
             }
             d3.selectAll(".annotation-group").remove()
+            d3.selectAll(".tooltip").remove()
 
             const maxYear = yearMap[scene]
             const data = aggregatedData.filter((item) => item.year <= maxYear)
