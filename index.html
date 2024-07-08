@@ -12,6 +12,11 @@
     svg {
         background-color: #329da8;
     }
+
+    .tooltip {
+        fill: black;
+        font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif
+    }
 </style>
 
 <body onload='init()'>
@@ -250,6 +255,7 @@
                 .attr("y", 700)
                 .text("North Dakota Total");
 
+            // Annotations
             const makeAnnotations = d3.annotation()
                 .type(d3.annotationLabel)
                 .annotations(annotationMap[scene])
@@ -257,6 +263,45 @@
                 .append("g")
                 .attr("class", "annotation-group")
                 .call(makeAnnotations)
+
+            // Tooltips, learned from: https://d3-graph-gallery.com/graph/interactivity_tooltip.html
+            if( scene === 3) {
+                svg.append("circle")
+                    .attr("class", "tooltip")
+                    .attr("id", "tooltip1")
+                    .attr("cx", 954)
+                    .attr("cy", 570)
+                    .attr("r", 10)
+                    .style("fill", "yellow")
+                svg.append("text")
+                    .attr("id", "tooltiptext1")
+                    .style("visibility", "hidden")
+                    .attr("x", 800)
+                    .attr("y", 505)
+                    .text("North Dakota \n\nhas drafted best management practices (BMPs)")
+                svg.append("text")
+                    .attr("id", "tooltiptext1")
+                    .style("visibility", "hidden")
+                    .attr("x", 780)
+                    .attr("y", 520)
+                    .text("which are voluntary agreements between farmers and beekeepers.")
+                svg.append("text")
+                    .attr("id", "tooltiptext1")
+                    .style("visibility", "hidden")
+                    .attr("x", 780)
+                    .attr("y", 535)
+                    .text("These agreements help protect the bees from harmful chemicals")
+                svg.append("text")
+                    .attr("id", "tooltiptext1")
+                    .style("visibility", "hidden")
+                    .attr("x", 780)
+                    .attr("y", 550)
+                    .text("that are used in agriculture.")
+                const tooltiptext1 = d3.selectAll("#tooltiptext1")
+                d3.select("#tooltip1")
+                    .on("mouseover", function(){return tooltiptext1.style("visibility", "visible");})
+                    .on("mouseout", function(){return tooltiptext1.style("visibility", "hidden");});
+            }
         }
     </script>
 </body>
