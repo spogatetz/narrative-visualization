@@ -167,7 +167,7 @@
             const x = d3.scaleLinear([1998, 2012], [0, 1000]);
             const y = d3.scaleLinear([220000000, 0], [0, 800]);
 
-            // Draw lines
+            // Draw lines, learned from: https://stackoverflow.com/a/42403674
             const line = d3.line()
                 .x(d => x(d.year))
                 .y(d => y(d.totalprod));
