@@ -338,7 +338,7 @@
                 d3.select("#tooltip3")
                     .on("mouseover", function(){return tooltiptext3.style("visibility", "visible");})
                     .on("mouseout", function(){return tooltiptext3.style("visibility", "hidden");});
-            } else if (scene == 2) {
+            } else if (scene === 2) {
                 svg.append("circle")
                     .attr("class", "tooltip")
                     .attr("id", "tooltip2")
@@ -374,6 +374,24 @@
                 d3.select("#tooltip2")
                     .on("mouseover", function(){return tooltiptext2.style("visibility", "visible");})
                     .on("mouseout", function(){return tooltiptext2.style("visibility", "hidden");});
+            } else if (scene === 1) {
+                svg.append("circle")
+                    .attr("class", "tooltip")
+                    .attr("id", "tooltip4")
+                    .attr("cx", 460)
+                    .attr("cy", 750)
+                    .attr("r", 10)
+                    .style("fill", "yellow")
+                svg.append("text")
+                    .attr("id", "tooltiptext4")
+                    .style("visibility", "hidden")
+                    .attr("x", 300)
+                    .attr("y", 700)
+                    .text("North Dakota is the country's largest producer of Honey!")
+                const tooltiptext4 = d3.selectAll("#tooltiptext4")
+                d3.select("#tooltip4")
+                    .on("mouseover", function(){return tooltiptext4.style("visibility", "visible");})
+                    .on("mouseout", function(){return tooltiptext4.style("visibility", "hidden");});
             }
         }
     </script>
