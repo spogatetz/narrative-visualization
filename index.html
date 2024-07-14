@@ -392,6 +392,24 @@
                 d3.select("#tooltip4")
                     .on("mouseover", function(){return tooltiptext4.style("visibility", "visible");})
                     .on("mouseout", function(){return tooltiptext4.style("visibility", "hidden");});
+
+                svg.append("circle")
+                    .attr("class", "tooltip")
+                    .attr("id", "tooltip5")
+                    .attr("cx", 440)
+                    .attr("cy", 225)
+                    .attr("r", 10)
+                    .style("fill", "yellow")
+                svg.append("text")
+                    .attr("id", "tooltiptext5")
+                    .style("visibility", "hidden")
+                    .attr("x", 300)
+                    .attr("y", 175)
+                    .text("In 1998, the United States produced over 219 million pounds of honey, from over 2.6 million bee colonies.")
+                const tooltiptext5 = d3.selectAll("#tooltiptext5")
+                d3.select("#tooltip5")
+                    .on("mouseover", function(){return tooltiptext5.style("visibility", "visible");})
+                    .on("mouseout", function(){return tooltiptext5.style("visibility", "hidden");});
             }
         }
     </script>
